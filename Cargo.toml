@@ -1,0 +1,25 @@
+[package]
+name = "user_auth_mongodb"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "^4"
+uuid = { version = "^0.8", features = ["v4"] }
+serde = { version = "^1", features = ["derive"] }
+env_logger = "0.8"
+log = "^0.4"
+strum_macros = "^0.24"
+strum = { version = "^0.24", features = ["derive"] }
+mongodb = "2.1"
+bson = { version = "2", features = ["chrono-0_4"] } # Needed for using chrono datetime in doc
+tokio = "1"
+chrono = "0.4" # Used for setting DateTimes
+bcrypt = "0.15.0"
+totp-rs = { version = "5.2.0", features = ["gen_secret"]}
+dotenv = "0.15.0"
+futures-util = "0.3.28"
+serde_json = "1.0.105"
+
