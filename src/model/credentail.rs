@@ -28,6 +28,7 @@ pub enum AddMfaError {
     MfaTypeNone,
 }
 
+#[derive(PartialEq, Serialize, Deserialize, EnumString, Display, Eq, Debug, Clone)]
 pub enum VarifyPasswordState {
     Success,
     Failed,

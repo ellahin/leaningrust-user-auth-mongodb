@@ -1,6 +1,6 @@
-use mongodb::{Client, options::ClientOptions, Database, bson::{doc, Document}};
+use mongodb::{Client, options::ClientOptions, Database, bson::doc};
 
-use crate::model::{user::User, credentail::{UserCredentail}};
+use crate::model::{user::User, credentail::UserCredentail};
 use strum_macros::Display;
 
 #[derive(Clone)]

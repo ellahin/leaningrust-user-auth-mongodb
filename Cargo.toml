@@ -22,4 +22,6 @@ totp-rs = { version = "5.2.0", features = ["gen_secret"]}
 dotenv = "0.15.0"
 futures-util = "0.3.28"
 serde_json = "1.0.105"
+base64 = "0.21.3"
+jsonwebtoken = { version = "8.3.0", features = ["use_pem"]}
 
