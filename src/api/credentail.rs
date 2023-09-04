@@ -97,8 +97,6 @@ pub async fn varify_password (
 
     let token_res = Token::new(user.user_uuid.clone(), 180, user.user_claims.clone(), TokenAuthType::Full);
 
-    println!("testing");
-
     if token_res.as_ref().is_err() {
         println!("{}", token_res.as_ref().unwrap_err());
         return Err(PasswordError::ServerError);
