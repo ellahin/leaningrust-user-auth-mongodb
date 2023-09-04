@@ -19,10 +19,7 @@ pub struct HiddenPath {
 #[derive(Debug, Display)]
 pub enum GetHiddenError {
     NotAuthorized,
-    ServerError,
     NoToken,
-    UserDisabled,
-    UserNoPermissions,
     MalformedRequest,
 }
 
@@ -36,10 +33,7 @@ impl ResponseError for GetHiddenError {
     fn status_code(&self) -> StatusCode {
         match self {
             GetHiddenError::NotAuthorized => StatusCode::UNAUTHORIZED,
-            GetHiddenError::ServerError => StatusCode::INTERNAL_SERVER_ERROR,
             GetHiddenError::NoToken => StatusCode::UNAUTHORIZED,
-            GetHiddenError::UserDisabled => StatusCode::FORBIDDEN,
-            GetHiddenError::UserNoPermissions => StatusCode::FORBIDDEN,
             GetHiddenError::MalformedRequest => StatusCode::BAD_REQUEST,
         }
     }
