@@ -167,6 +167,23 @@ impl MongoRepo {
 
     }
 
+    pub async fn update_user(&self, user: User) -> Result<User, MongoErrors> {
+
+        let collection = self.client_database.collection::<User>("users");
+
+        let user_insert = collection.update_one(
+            doc!{"user_uuid": user.user_uuid.clone()}, 
+            doc! {"$set": bson::to_bson(&user).unwrap()}, 
+            None
+        ).await;
+
+        if user_insert.is_err() {
+            return Err(MongoErrors::DBFailure);
+        }
+
+        return Ok(user);
+    }
+
 
 
 }

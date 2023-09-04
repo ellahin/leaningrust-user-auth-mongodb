@@ -77,7 +77,7 @@ pub async fn varify_password (
         return Err(PasswordError::UserDoesntExist);
     }
 
-    let user = user_option.unwrap();
+    let mut user = user_option.unwrap();
 
     if user.user_state == UserState::Disabled {
         return Err(PasswordError::AccountLocked);
@@ -99,6 +99,14 @@ pub async fn varify_password (
 
     if token_res.as_ref().is_err() {
         println!("{}", token_res.as_ref().unwrap_err());
+        return Err(PasswordError::ServerError);
+    }
+
+    user.login();
+
+    let user_update = mongo_repo.update_user(user.clone()).await;
+
+    if user_update.is_err() {
         return Err(PasswordError::ServerError);
     }
 
