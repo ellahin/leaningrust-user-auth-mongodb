@@ -1,6 +1,6 @@
 use crate::model::user::User;
 use crate::model::credentail::UserCredentail;
-use crate::repo::mongodb::{MongoRepo, MongoErrors};
+use crate::repo::database::mongodb::{MongoRepo, MongoErrors};
 use actix_web::{
     get,
     post,

@@ -4,7 +4,7 @@ mod api;
 
 use std::env;
 use dotenv::dotenv;
-use repo::mongodb::MongoRepo;
+use repo::database::mongodb::MongoRepo;
 use actix_web::{HttpServer, App, web::Data, middleware::Logger};
 use api::user::{get_user, new_user};
 use api::credentail::varify_password;
