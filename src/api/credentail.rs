@@ -1,6 +1,6 @@
 use crate::model::user::UserState;
 use crate::model::credentail::VarifyPasswordState;
-use crate::repo::mongodb::MongoRepo;
+use crate::repo::database::mongodb::MongoRepo;
 use crate::model::token::{Token, TokenAuthType};
 
 use actix_web::{
