@@ -1,24 +1,17 @@
-use mongodb::{Client, options::ClientOptions, Database, bson::doc};
-
 use crate::model::{user::User, credentail::UserCredentail};
-use strum_macros::Display;
+use crate::repo::database::base::DatabaseError;
+use crate::repo::database::base::Database as BaseDatabase;
+
+use mongodb::{Client, options::ClientOptions, Database, bson::doc};
 
 #[derive(Clone)]
 pub struct MongoRepo {
     client_database: Database,
 }
 
-#[derive(Display, Eq, PartialEq, Debug)]
-pub enum MongoErrors {
-    UserNameExists,
-    UserUuidExists,
-    UserDoesntExist,
-    DBFailure,
-}
+impl BaseDatabase for MongoRepo {
 
-impl MongoRepo {
-
-    pub async fn init (
+    async fn init (
         connection_url: String,
         database: String
     ) -> MongoRepo {
@@ -30,7 +23,7 @@ impl MongoRepo {
         }
     }
 
-    pub async fn get_user(&self, user_uudi: String) -> Option<User> {
+    async fn get_user(&self, user_uudi: String) -> Option<User> {
 
         let collection = self.client_database.collection::<User>("users");
 
@@ -53,7 +46,7 @@ impl MongoRepo {
     }
 
 
-    pub async fn get_credentail(&self, user_uudi: String) -> Option<UserCredentail> {
+    async fn get_credentail(&self, user_uudi: String) -> Option<UserCredentail> {
 
         let collection = self.client_database.collection::<UserCredentail>("credentails");
 
@@ -76,7 +69,7 @@ impl MongoRepo {
     }
 
 
-    pub async fn get_user_by_user_name(&self, user_name: String) -> Option<User> {
+    async fn get_user_by_user_name(&self, user_name: String) -> Option<User> {
 
         let collection = self.client_database.collection::<User>("users");
 
@@ -98,14 +91,14 @@ impl MongoRepo {
 
     }
 
-    pub async fn insert_user(&self, user: User) -> Result<User, MongoErrors> {
+    async fn insert_user(&self, user: User) -> Result<User, DatabaseError> {
 
         let collection = self.client_database.collection::<User>("users");
 
         let mut db_find = self.get_user(user.user_uuid.clone()).await;
 
         if db_find.is_some(){
-            return Err(MongoErrors::UserUuidExists);
+            return Err(DatabaseError::UserUuidExists);
         }
 
         
@@ -113,13 +106,13 @@ impl MongoRepo {
         db_find = self.get_user_by_user_name(user.user_email.clone()).await;
 
         if db_find.is_some(){
-            return Err(MongoErrors::UserNameExists);
+            return Err(DatabaseError::UserNameExists);
         }
 
         let insert = collection.insert_one(user.clone(), None).await;
 
         if insert.is_err() {
-            return Err(MongoErrors::DBFailure);
+            return Err(DatabaseError::DBFailure);
         } 
             
         return Ok(user);
@@ -127,47 +120,47 @@ impl MongoRepo {
     }
 
 
-    pub async fn insert_credentail(&self, credentail: UserCredentail) -> Result<bool, MongoErrors> {
+    async fn insert_credentail(&self, credentail: UserCredentail) -> Result<bool, DatabaseError> {
 
         let collection = self.client_database.collection::<UserCredentail>("credentails");
 
         let db_find = self.get_credentail(credentail.user_uuid.clone()).await;
 
         if db_find.is_some(){
-            return Err(MongoErrors::UserUuidExists);
+            return Err(DatabaseError::UserUuidExists);
         }
 
         let insert = collection.insert_one(credentail.clone(), None).await;
 
         if insert.is_err() {
-            return Err(MongoErrors::DBFailure);
+            return Err(DatabaseError::DBFailure);
         } 
             
         return Ok(true);
 
     }
 
-    pub async fn delete_user(&self, user: User) -> Result<User, MongoErrors> {
+    async fn delete_user(&self, user: User) -> Result<User, DatabaseError> {
 
         let collection = self.client_database.collection::<User>("users");
 
         let user_find = self.get_user(user.user_uuid.clone()).await;
 
         if user_find.is_none() {
-            return Err(MongoErrors::UserDoesntExist);
+            return Err(DatabaseError::UserDoesntExist);
         }
 
         let delete = collection.delete_one(doc! {"user_uuid": user.user_uuid.clone()}, None).await;
 
         if delete.as_ref().is_err() {
-            return Err(MongoErrors::DBFailure)
+            return Err(DatabaseError::DBFailure)
         }
 
         return Ok(user)
 
     }
 
-    pub async fn update_user(&self, user: User) -> Result<User, MongoErrors> {
+    async fn update_user(&self, user: User) -> Result<User, DatabaseError> {
 
         let collection = self.client_database.collection::<User>("users");
 
@@ -178,7 +171,7 @@ impl MongoRepo {
         ).await;
 
         if user_insert.is_err() {
-            return Err(MongoErrors::DBFailure);
+            return Err(DatabaseError::DBFailure);
         }
 
         return Ok(user);

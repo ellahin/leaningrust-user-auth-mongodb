@@ -1,3 +1,5 @@
+#![feature(async_fn_in_trait)]
+
 mod model;
 mod repo;
 mod api;
@@ -5,6 +7,7 @@ mod api;
 use std::env;
 use dotenv::dotenv;
 use repo::database::mongodb::MongoRepo;
+use repo::database::base::Database;
 use actix_web::{HttpServer, App, web::Data, middleware::Logger};
 use api::user::{get_user, new_user};
 use api::credentail::varify_password;

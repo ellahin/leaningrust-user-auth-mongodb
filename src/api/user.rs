@@ -1,6 +1,9 @@
 use crate::model::user::User;
 use crate::model::credentail::UserCredentail;
-use crate::repo::database::mongodb::{MongoRepo, MongoErrors};
+use crate::repo::database::mongodb::MongoRepo;
+use crate::repo::database::base::{Database, DatabaseError};
+
+
 use actix_web::{
     get,
     post,
@@ -118,7 +121,7 @@ pub async fn new_user (
 
     if user_insert_status.is_err() {
 
-        while user_insert_status.as_ref().err() == Some(&MongoErrors::UserUuidExists) {
+        while user_insert_status.as_ref().err() == Some(&DatabaseError::UserUuidExists) {
             user_obj = User::new(user.user_name.clone());
             user_insert_status = mongo_repo.insert_user(user_obj.clone()).await;
         }
@@ -129,10 +132,10 @@ pub async fn new_user (
 
     if user_insert_status.is_err() {
         match user_insert_status.as_ref().err().unwrap() {
-            MongoErrors::UserNameExists => return Err(NewUserError::UserAlreadyExists),
-            MongoErrors::DBFailure => return Err(NewUserError::ServerFailure),
-            MongoErrors::UserDoesntExist => return Err(NewUserError::ServerFailure),
-            MongoErrors::UserUuidExists => return Err(NewUserError::ServerFailure),
+            DatabaseError::UserNameExists => return Err(NewUserError::UserAlreadyExists),
+            DatabaseError::DBFailure => return Err(NewUserError::ServerFailure),
+            DatabaseError::UserDoesntExist => return Err(NewUserError::ServerFailure),
+            DatabaseError::UserUuidExists => return Err(NewUserError::ServerFailure),
         }
     }
 
